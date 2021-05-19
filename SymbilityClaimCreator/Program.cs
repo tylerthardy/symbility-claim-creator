@@ -36,12 +36,8 @@ namespace SymbilityClaimCreator
 
                     var configurationRoot = configuration.Build();
 
-                    var claimSourceConfiguration = new SymbilityApiConfiguration();
-                    var assigneeConfiguration = new SymbilityApiConfiguration();
-                    var secondAssigneeConfiguration = new SymbilityApiConfiguration();
-                    configurationRoot.GetSection("ClaimSourceConfiguration").Bind(claimSourceConfiguration);
-                    configurationRoot.GetSection("AssigneeConfiguration").Bind(assigneeConfiguration);
-                    configurationRoot.GetSection("SecondAssigneeConfiguration").Bind(secondAssigneeConfiguration);
+                    var configurationSettings = new SymbilityClaimCreatorConfiguration();
+                    configurationRoot.Bind(configurationSettings);
                 });
     }
 }
