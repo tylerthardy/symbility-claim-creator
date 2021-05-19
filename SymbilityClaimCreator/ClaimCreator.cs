@@ -11,7 +11,7 @@ namespace SymbilityClaimCreator
     {
         private SymbilityApiService _claimSourceApiService;
 
-        public ClaimCreator(IOptions<SymbilityClaimCreatorConfiguration> options)
+        public ClaimCreator(IOptions<ClaimCreatorConfiguration> options)
         {
             var configuration = options.Value;
             _claimSourceApiService = new SymbilityApiService(configuration.ClaimSourceConfiguration);
@@ -53,6 +53,7 @@ namespace SymbilityClaimCreator
 
         private void ValidateClaim(ClaimSpecification claim)
         {
+            //TODO: Determine better way to perform realistic validation on generated API
             var invalidException = new InvalidOperationException("The object's nullability is invalid: Custom validation");
 
             // Missing common-sense validations

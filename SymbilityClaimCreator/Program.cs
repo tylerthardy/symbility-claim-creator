@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using MockDataUtils;
 
 namespace SymbilityClaimCreator
 {
@@ -43,7 +42,7 @@ namespace SymbilityClaimCreator
                 })
                 .ConfigureServices((hosting, services) =>
                 {
-                    services.Configure<SymbilityClaimCreatorConfiguration>(hosting.Configuration);
+                    services.Configure<ClaimCreatorConfiguration>(hosting.Configuration);
                     services.AddHostedService<ClaimCreator>();
                 });
     }

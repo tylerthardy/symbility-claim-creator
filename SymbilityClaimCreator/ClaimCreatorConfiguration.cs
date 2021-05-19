@@ -2,7 +2,7 @@
 
 namespace SymbilityClaimCreator
 {
-    public class SymbilityClaimCreatorConfiguration
+    public class ClaimCreatorConfiguration
     {
         public SymbilityApiConfiguration ClaimSourceConfiguration { get; set; }
         public SymbilityApiConfiguration AssigneeConfiguration { get; set; }
