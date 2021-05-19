@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "SymbilityClaimCreator": {
+      "commandName": "Project",
+      "commandLineArgs": "--environment \"Debug\""
+    }
+  }
+}
