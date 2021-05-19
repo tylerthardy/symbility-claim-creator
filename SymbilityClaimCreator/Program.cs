@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
+using MockDataUtils;
 
 namespace SymbilityClaimCreator
 {
@@ -10,6 +11,9 @@ namespace SymbilityClaimCreator
         {
             using var host = CreateHostBuilder(args).Build();
 
+            var addressGenerator = new MockAddressGenerator();
+            var address = addressGenerator.GetRandomAddress();
+            Console.WriteLine(address);
             Console.ReadKey();
         }
 
