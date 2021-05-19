@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SymbilityClaimCreator", "Sy
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MockDataUtils", "MockDataUtils\MockDataUtils.csproj", "{006FEAAC-9BD3-4D58-A01B-AD6D7DB9D6B7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SymbilityApiGenerator", "SymbilityApiGenerator\SymbilityApiGenerator.csproj", "{CFA9595E-8A2F-4912-B01C-B09D1FE5C399}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{006FEAAC-9BD3-4D58-A01B-AD6D7DB9D6B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{006FEAAC-9BD3-4D58-A01B-AD6D7DB9D6B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{006FEAAC-9BD3-4D58-A01B-AD6D7DB9D6B7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CFA9595E-8A2F-4912-B01C-B09D1FE5C399}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CFA9595E-8A2F-4912-B01C-B09D1FE5C399}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CFA9595E-8A2F-4912-B01C-B09D1FE5C399}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CFA9595E-8A2F-4912-B01C-B09D1FE5C399}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
