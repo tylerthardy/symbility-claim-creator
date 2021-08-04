@@ -1,7 +1,11 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using DotNetXtensions.Globalization;
 
 namespace MockDataUtils
 {
@@ -17,12 +21,44 @@ namespace MockDataUtils
             _mockAddresses = JsonSerializer.Deserialize<MockAddressSource>(sourceJson).Addresses;
         }
 
-        public MockAddress GetRandomAddress()
+        public MockAddress GetRandomAddress(AddressOptions options)
         {
             var random = new Random();
-            var index = random.Next(0, _mockAddresses.Length);
-            return _mockAddresses[index];
+            var addresses = ApplyFilters(_mockAddresses, options);
+            var index = random.Next(0, addresses.Length);
+            return ApplyOptions(addresses[index], options);
         }
+
+        private MockAddress[] ApplyFilters(MockAddress[] addresses, AddressOptions options)
+        {
+            var results = addresses.AsQueryable();
+            if (!string.IsNullOrEmpty(options.StateCode)) results = results.Where(a => a.State == options.StateCode);
+
+            return results.ToArray();
+        }
+
+        private MockAddress ApplyOptions(MockAddress address, AddressOptions options)
+        {
+            if (options.LongStateNames) address.State = LookupStateName(address.State);
+
+            return address;
+        }
+
+        private string LookupStateName(string stateCode)
+        {
+            if (!GeoNames.USCanadaStatesByAbbreviationDict.TryGetValue(stateCode, out var stateName))
+            {
+                throw new InvalidDataException($"No State fullname found for abbreviation: {stateCode}");
+            }
+
+            return stateName;
+        }
+    }
+
+    public class AddressOptions
+    {
+        public bool LongStateNames { get; set; }
+        public string StateCode { get; set; }
     }
 
     public class MockAddressSource

@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using MockDataUtils;
 
 namespace SymbilityClaimCreator
 {
@@ -11,7 +12,8 @@ namespace SymbilityClaimCreator
         static async Task Main(string[] args)
         {
             using IHost host = CreateHostBuilder(args).Build();
-            await host.RunAsync();
+            await host.StartAsync();
+            await host.WaitForShutdownAsync();
 
             Console.WriteLine("Creator finished! Press any key to continue...");
             Console.ReadKey();
@@ -36,13 +38,13 @@ namespace SymbilityClaimCreator
 
                     configuration
                         .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                        .AddJsonFile($"appsettings.{env.EnvironmentName}.json", true, true);
-
-                    var configurationRoot = configuration.Build();
+                        .AddJsonFile($"appsettings.{env.EnvironmentName}.json", true, true)
+                        .Build();
                 })
                 .ConfigureServices((hosting, services) =>
                 {
                     services.Configure<ClaimCreatorConfiguration>(hosting.Configuration);
+                    services.AddSingleton<MockAddressGenerator>();
                     services.AddHostedService<ClaimCreator>();
                 });
     }

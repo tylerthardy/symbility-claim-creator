@@ -2,17 +2,21 @@
 using System.Threading;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
+using MockDataUtils;
 using SymbilityClaimAccess;
 using Task = System.Threading.Tasks.Task;
+using TimeZone = SymbilityClaimAccess.TimeZone;
 
 namespace SymbilityClaimCreator
 {
     public class ClaimCreator : IHostedService
     {
+        private readonly MockAddressGenerator _mockAddressGenerator;
         private SymbilityApiService _claimSourceApiService;
 
-        public ClaimCreator(IOptions<ClaimCreatorConfiguration> options)
+        public ClaimCreator(IOptions<ClaimCreatorConfiguration> options, MockAddressGenerator mockAddressGenerator)
         {
+            _mockAddressGenerator = mockAddressGenerator;
             var configuration = options.Value;
             _claimSourceApiService = new SymbilityApiService(configuration.ClaimSourceConfiguration);
         }
@@ -32,19 +36,23 @@ namespace SymbilityClaimCreator
         private ClaimSpecification CreateClaim(string claimNumber)
         {
             var policyNumber = "POL-" + claimNumber;
+            var mockAddress = _mockAddressGenerator.GetRandomAddress(new AddressOptions { LongStateNames = true, StateCode = "DC"});
             var claim = new ClaimSpecification
             {
+                CreationDate = DateTimeOffset.UtcNow,
                 Number = claimNumber,
                 InsuredCompanyName = "TestCompany",
                 PolicyNumber = policyNumber,
                 LossType = "fire",
                 LossDate = DateTimeOffset.UtcNow.AddDays(-1),
+                LossDateTimeZone = TimeZone.Utc,
                 InsuredAddress = new Address
                 {
-                    City = "test",
-                    Line1 = "test2",
-                    ZipCode = "12312"
-                }
+                    City = mockAddress.City,
+                    Line1 = mockAddress.Address1,
+                    ZipCode = mockAddress.PostalCode,
+                    State = GetStateCode(mockAddress.State)
+        }
             };
             
             ValidateClaim(claim);
@@ -69,6 +77,13 @@ namespace SymbilityClaimCreator
             if (claim.InsuredAddress == null || string.IsNullOrEmpty(claim.InsuredAddress.Line1) ||
                 string.IsNullOrEmpty(claim.InsuredAddress.City) ||
                 string.IsNullOrEmpty(claim.InsuredAddress.ZipCode)) throw invalidException;
+        }
+
+        private State GetStateCode(string state)
+        {
+            if (state == "Washington DC") return State.DistrictOfColumbia;
+            var stateEnum = Enum.Parse<State>(state);
+            return stateEnum;
         }
     }
 }
