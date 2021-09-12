@@ -1,6 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using SymbilityClaimAccess.Models.Configuration;
+using SymbilityClaimAccess.Models.Extensions;
 
 namespace SymbilityClaimAccess
 {
@@ -14,19 +15,20 @@ namespace SymbilityClaimAccess
             _symbilityRestClient = new SymbilityRestClient(httpClient);
         }
 
-        public async Task<Claim> CreateClaim(ClaimSpecification claimSpecification, CancellationToken cancellationToken)
+        public async Task<Claim> CreateClaim(ClaimSpecification claimSpecification, CancellationToken? cancellationToken = null)
         {
-            return await _symbilityRestClient.ClaimCreateClaimAsync(null, claimSpecification, cancellationToken);
+            claimSpecification.AssertValid();
+            return await _symbilityRestClient.ClaimCreateClaimAsync(null, claimSpecification, cancellationToken ?? CancellationToken.None);
         }
 
-        public async Task<ClaimAssignment> AssignClaim(Claim claim, ClaimAssignment parentAssignment, AddClaimAssigneeSpecification addClaimAssigneeSpecification, string fromUserSpecification, CancellationToken cancellationToken)
+        public async Task<ClaimAssignment> AssignClaim(Claim claim, ClaimAssignment parentAssignment, AddClaimAssigneeSpecification addClaimAssigneeSpecification, string fromUserSpecification, CancellationToken? cancellationToken = null)
         {
             return await _symbilityRestClient.AssignmentAddClaimAssigneeAsync(
                 claim.UniqueID,
                 parentAssignment?.AssignmentID ?? 0,
                 fromUserSpecification,
                 addClaimAssigneeSpecification,
-                cancellationToken
+                cancellationToken ?? CancellationToken.None
             );
         }
     }

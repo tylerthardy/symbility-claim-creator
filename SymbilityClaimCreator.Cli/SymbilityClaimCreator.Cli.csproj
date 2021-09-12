@@ -12,6 +12,7 @@
   <ItemGroup>
     <ProjectReference Include="..\MockDataUtils\MockDataUtils.csproj" />
     <ProjectReference Include="..\SymbilityClaimAccess\SymbilityClaimAccess.csproj" />
+    <ProjectReference Include="..\SymbilityClaimCreator\SymbilityClaimCreator.csproj" />
   </ItemGroup>
 
   <ItemGroup>

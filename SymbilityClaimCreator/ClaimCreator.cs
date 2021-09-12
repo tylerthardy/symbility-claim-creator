@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
+using System.Threading.Tasks;
 using MockDataUtils;
 using SymbilityClaimAccess;
 using SymbilityClaimAccess.Models.Configuration;
@@ -11,7 +10,7 @@ using TimeZone = SymbilityClaimAccess.TimeZone;
 
 namespace SymbilityClaimCreator.Cli
 {
-    public class ClaimCreator : IHostedService
+    public class ClaimCreator
     {
         private readonly MockAddressGenerator _mockAddressGenerator;
         private SymbilityApiService _claimSourceApiService;
@@ -19,11 +18,10 @@ namespace SymbilityClaimCreator.Cli
         private SymbilityApiConfiguration _firstAssigneeConfiguration;
         private SymbilityApiConfiguration _secondAssigneeConfiguration;
 
-        public ClaimCreator(IOptions<ClaimCreatorConfiguration> options, MockAddressGenerator mockAddressGenerator)
+        public ClaimCreator(ClaimCreatorConfiguration configuration, MockAddressGenerator mockAddressGenerator)
         {
             _mockAddressGenerator = mockAddressGenerator;
 
-            var configuration = options.Value;
             _sourceConfiguration = configuration.ClaimSourceConfiguration;
             _firstAssigneeConfiguration = configuration.FirstAssigneeConfiguration;
             _secondAssigneeConfiguration = configuration.SecondAssigneeConfiguration;
@@ -31,28 +29,35 @@ namespace SymbilityClaimCreator.Cli
             _claimSourceApiService = new SymbilityApiService(_sourceConfiguration);
         }
 
-        public async Task StartAsync(CancellationToken cancellationToken)
+        public async Task<Claim> CreateSourceClaim()
         {
-            // Create claim
             var claimNumber = "THAuto-" + DateTime.UtcNow.ToString("MMddyyy-HHMM");
             var claimSpec = GenerateClaimSpec(claimNumber);
-            var claim = await _claimSourceApiService.CreateClaim(claimSpec, cancellationToken);
+            return await CreateSourceClaim(claimSpec);
+        }
 
-            // Assign to first (IA)
+        public async Task<Claim> CreateSourceClaim(ClaimSpecification claimSpecification)
+        {
+            var claim = await _claimSourceApiService.CreateClaim(claimSpecification);
+            return claim;
+        }
+
+        public async Task<ClaimAssignment> AssignToFirstAssignee(Claim claim)
+        {
             var fromSourceUserSpec = _firstAssigneeConfiguration.FromUserSpecification;
             var assignmentTypeCode = "ONSITE-SVCS";
             var firstAssigneeSpec = GenerateAssigneeSpec(_firstAssigneeConfiguration.CompanyId, assignmentTypeCode);
-            var firstAssigneeAssignment = await _claimSourceApiService.AssignClaim(claim, null, firstAssigneeSpec, fromSourceUserSpec, cancellationToken);
-
-            // Assign to second (adjuster)
-            var fromFirstUserSpec = _firstAssigneeConfiguration.FromUserSpecification;
-            var secondAssigneeSpec = GenerateAssigneeSpec(_secondAssigneeConfiguration.CompanyId, assignmentTypeCode);
-            var secondAssigneeAssignment = await _claimSourceApiService.AssignClaim(claim, firstAssigneeAssignment, secondAssigneeSpec, fromFirstUserSpec, cancellationToken);
+            var firstAssigneeAssignment =
+                await _claimSourceApiService.AssignClaim(claim, null, firstAssigneeSpec, fromSourceUserSpec);
+            return firstAssigneeAssignment;
         }
 
-        public async Task StopAsync(CancellationToken cancellationToken)
+        public async Task<ClaimAssignment> AssignToSecondAssignee(Claim claim, ClaimAssignment assignment)
         {
-            throw new System.NotImplementedException();
+            var fromFirstUserSpec = _firstAssigneeConfiguration.FromUserSpecification;
+            var secondAssigneeSpec = GenerateAssigneeSpec(_secondAssigneeConfiguration.CompanyId, assignmentTypeCode: null);
+            var secondAssigneeAssignment = await _claimSourceApiService.AssignClaim(claim, assignment, secondAssigneeSpec, fromFirstUserSpec);
+            return secondAssigneeAssignment;
         }
 
         private ClaimSpecification GenerateClaimSpec(string claimNumber)
@@ -77,7 +82,6 @@ namespace SymbilityClaimCreator.Cli
                 }
             };
             
-            claim.AssertValid();
             return claim;
         }
 

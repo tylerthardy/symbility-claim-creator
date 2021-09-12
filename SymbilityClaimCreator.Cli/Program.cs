@@ -45,7 +45,7 @@ namespace SymbilityClaimCreator.Cli
                 {
                     services.Configure<ClaimCreatorConfiguration>(hosting.Configuration);
                     services.AddSingleton<MockAddressGenerator>();
-                    services.AddHostedService<ClaimCreator>();
+                    services.AddHostedService<ClaimCreatorCli>();
                 });
     }
 }
