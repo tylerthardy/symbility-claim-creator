@@ -15,6 +15,7 @@ namespace SymbilityClaimCreator
         private SymbilityApiConfiguration _sourceConfiguration;
         private SymbilityApiConfiguration _firstAssigneeConfiguration;
         private SymbilityApiConfiguration _secondAssigneeConfiguration;
+        private SymbilityApiService _firstAssigneeApiService;
 
         public ClaimCreator(ClaimCreatorConfiguration configuration, MockAddressGenerator mockAddressGenerator)
         {
@@ -25,37 +26,37 @@ namespace SymbilityClaimCreator
             _secondAssigneeConfiguration = configuration.SecondAssigneeConfiguration;
 
             _claimSourceApiService = new SymbilityApiService(_sourceConfiguration);
+            _firstAssigneeApiService = new SymbilityApiService(_firstAssigneeConfiguration);
         }
 
         public async Task<Claim> CreateSourceClaim()
         {
-            var claimNumber = "THAuto-" + DateTime.UtcNow.ToString("MMddyyy-HHMM");
+            var claimNumber = "THAuto-" + DateTime.UtcNow.ToString("MMddyyy-HHmm");
             var claimSpec = GenerateClaimSpec(claimNumber);
             return await CreateSourceClaim(claimSpec);
         }
 
         public async Task<Claim> CreateSourceClaim(ClaimSpecification claimSpecification)
         {
-            var claim = await _claimSourceApiService.CreateClaim(claimSpecification);
+            var claim = await _claimSourceApiService.CreateClaim(claimSpecification, _sourceConfiguration.FromUserSpecification);
             return claim;
         }
 
         public async Task<ClaimAssignment> AssignToFirstAssignee(Claim claim)
         {
-            var fromSourceUserSpec = _firstAssigneeConfiguration.FromUserSpecification;
+            var userSpec = _sourceConfiguration.FromUserSpecification;
             var assignmentTypeCode = "ONSITE-SVCS";
-            var firstAssigneeSpec = GenerateAssigneeSpec(_firstAssigneeConfiguration.CompanyId, assignmentTypeCode);
-            var firstAssigneeAssignment =
-                await _claimSourceApiService.AssignClaim(claim, null, firstAssigneeSpec, fromSourceUserSpec);
-            return firstAssigneeAssignment;
+            var assigneeSpec = GenerateAssigneeSpec(_firstAssigneeConfiguration.CompanyId, assignmentTypeCode);
+            var assignment = await _claimSourceApiService.AssignClaim(claim, null, assigneeSpec, userSpec);
+            return assignment;
         }
 
         public async Task<ClaimAssignment> AssignToSecondAssignee(Claim claim, ClaimAssignment assignment)
         {
-            var fromFirstUserSpec = _firstAssigneeConfiguration.FromUserSpecification;
-            var secondAssigneeSpec = GenerateAssigneeSpec(_secondAssigneeConfiguration.CompanyId, assignmentTypeCode: null);
-            var secondAssigneeAssignment = await _claimSourceApiService.AssignClaim(claim, assignment, secondAssigneeSpec, fromFirstUserSpec);
-            return secondAssigneeAssignment;
+            var userSpec = _firstAssigneeConfiguration.FromUserSpecification;
+            var assigneeSpec = GenerateAssigneeSpec(_secondAssigneeConfiguration.CompanyId, assignmentTypeCode: null);
+            var secondAssignment = await _firstAssigneeApiService.AssignClaim(claim, assignment, assigneeSpec, userSpec);
+            return secondAssignment;
         }
 
         private ClaimSpecification GenerateClaimSpec(string claimNumber)

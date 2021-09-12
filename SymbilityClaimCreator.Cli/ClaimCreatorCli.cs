@@ -41,7 +41,7 @@ namespace SymbilityClaimCreator.Cli
                     await _claimCreator.AssignToSecondAssignee(c3, fca1);
                     return;
                 default:
-                    Console.WriteLine("Unknown method (should a number from the list above)");
+                    Console.WriteLine("Unknown method (should be a number from the list above)");
                     Exit();
                     return;
             }
@@ -63,7 +63,6 @@ namespace SymbilityClaimCreator.Cli
         private void Exit()
         {
             Console.WriteLine("Exiting...");
-            Console.ReadLine();
         }
     }
 }

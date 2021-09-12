@@ -15,10 +15,10 @@ namespace SymbilityClaimAccess
             _symbilityRestClient = new SymbilityRestClient(httpClient);
         }
 
-        public async Task<Claim> CreateClaim(ClaimSpecification claimSpecification, CancellationToken? cancellationToken = null)
+        public async Task<Claim> CreateClaim(ClaimSpecification claimSpecification, string fromUserSpecification, CancellationToken? cancellationToken = null)
         {
             claimSpecification.AssertValid();
-            return await _symbilityRestClient.ClaimCreateClaimAsync(null, claimSpecification, cancellationToken ?? CancellationToken.None);
+            return await _symbilityRestClient.ClaimCreateClaimAsync(fromUserSpecification, claimSpecification, cancellationToken ?? CancellationToken.None);
         }
 
         public async Task<ClaimAssignment> AssignClaim(Claim claim, ClaimAssignment parentAssignment, AddClaimAssigneeSpecification addClaimAssigneeSpecification, string fromUserSpecification, CancellationToken? cancellationToken = null)
