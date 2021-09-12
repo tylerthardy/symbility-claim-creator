@@ -1,6 +1,5 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Namotion.Reflection;
 using SymbilityClaimAccess.Models.Configuration;
 
 namespace SymbilityClaimAccess
@@ -15,11 +14,20 @@ namespace SymbilityClaimAccess
             _symbilityRestClient = new SymbilityRestClient(httpClient);
         }
 
-        public async Task<object> CreateClaim(ClaimSpecification claimSpecification, CancellationToken cancellationToken)
+        public async Task<Claim> CreateClaim(ClaimSpecification claimSpecification, CancellationToken cancellationToken)
         {
-            claimSpecification.EnsureValidNullability();
             return await _symbilityRestClient.ClaimCreateClaimAsync(null, claimSpecification, cancellationToken);
         }
-        
+
+        public async Task<ClaimAssignment> AssignClaim(Claim claim, ClaimAssignment parentAssignment, AddClaimAssigneeSpecification addClaimAssigneeSpecification, string fromUserSpecification, CancellationToken cancellationToken)
+        {
+            return await _symbilityRestClient.AssignmentAddClaimAssigneeAsync(
+                claim.UniqueID,
+                parentAssignment?.AssignmentID ?? 0,
+                fromUserSpecification,
+                addClaimAssigneeSpecification,
+                cancellationToken
+            );
+        }
     }
 }
