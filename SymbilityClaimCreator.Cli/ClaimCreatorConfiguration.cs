@@ -1,6 +1,6 @@
 ﻿using SymbilityClaimAccess.Models.Configuration;
 
-namespace SymbilityClaimCreator
+namespace SymbilityClaimCreator.Cli
 {
     public class ClaimCreatorConfiguration
     {

@@ -9,7 +9,7 @@ using SymbilityClaimAccess.Models.Extensions;
 using Task = System.Threading.Tasks.Task;
 using TimeZone = SymbilityClaimAccess.TimeZone;
 
-namespace SymbilityClaimCreator
+namespace SymbilityClaimCreator.Cli
 {
     public class ClaimCreator : IHostedService
     {

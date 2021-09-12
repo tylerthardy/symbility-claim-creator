@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "SymbilityClaimCreator": {
+    "SymbilityClaimCreator.Cli": {
       "commandName": "Project",
       "commandLineArgs": "--environment \"Debug\""
     }
