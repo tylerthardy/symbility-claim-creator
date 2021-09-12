@@ -24,7 +24,7 @@ namespace SymbilityClaimCreator.Cli
                 return;
             }
 
-            var method = PromptUser("Choose a method (1: create claim, 2: create & assign to IA, 3: create, assigned to IA, & assign to adjuster):");
+            var method = PromptUser("Choose a method (1: create claim, 2: create & assign to IA, 3: create, assign to IA, & assign to adjuster):");
 
             switch (method)
             {
