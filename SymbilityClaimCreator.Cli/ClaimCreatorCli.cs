@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using MockDataUtils;
-using SymbilityClaimAccess;
-using SymbilityClaimAccess.Models.Configuration;
-using SymbilityClaimAccess.Models.Extensions;
-using Task = System.Threading.Tasks.Task;
-using TimeZone = SymbilityClaimAccess.TimeZone;
 
 namespace SymbilityClaimCreator.Cli
 {
