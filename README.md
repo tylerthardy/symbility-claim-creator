@@ -2,8 +2,8 @@
 Automated tool to create &amp; assign claims to vendors in CoreLogic's Symbility claim management &amp; estimate system
 
 ## Requirements
-.NET Core 5.0
-Visual Studio 2019
+* .NET Core 5.0
+* Visual Studio 2019
 
 ## Usage
 ### Debug
